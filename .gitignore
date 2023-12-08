@@ -4,4 +4,5 @@ llama2.c
 .DS_Store
 .vscode/
 llama*bin
-__pycache__/
+__pycache__
+stories*bin

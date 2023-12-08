@@ -17,6 +17,7 @@ rand ={ version = "*" }
 byteorder = { version = "1.5" }
 rand_chacha ={ version = "*" }
 cudarc = { version = "*" }
+packed_simd = "0.3.9"
 
 [features]
 gpu = []
