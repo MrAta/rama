@@ -11,7 +11,7 @@ use axum::response::sse::Event;
 use crate::{device::device::Device, tokenizer::bpe::{decode, Tokenizer}, transformer::infer::forward, utils::read::*};
 use std::io::{prelude::*, stdout};
 
-use self::state::{RunStateView, TransformerWeightsView};
+use self::state::{RunStateView, TransformerWeightsView, QRunStateView, QTransformerWeightsView};
 
 pub struct View<'a, T: Storage> {
     pub data: &'a T,

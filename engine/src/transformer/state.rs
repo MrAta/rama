@@ -1,10 +1,38 @@
 use super::{MutView, Storage, View};
+static Q_GROUP_SIZE: usize = 0;
+
 #[derive(Debug, Clone, Default)]
 pub struct QuantizedTensor {
     pub data: Vec<i8>,
-    pub scale: f32,
-    pub zero_point: i32,
+    pub scale: Vec<f32>
+}
 
+impl QuantizedTensor{
+    pub fn quantize(&self, x: Vec<f32>, n: usize) {
+        let num_groups = n / Q_GROUP_SIZE;
+        let q_max = 127;
+
+        for group in 0..num_groups{
+            let w_max: f32 = (0..Q_GROUP_SIZE)
+            .map(|i| x[group * Q_GROUP_SIZE + i])
+            .fold(0.0, |a: f32, b: f32| a.max(b));
+
+        let scale: f32 = w_max / q_max as f32;
+        self.scale[group] = scale;
+        (0..Q_GROUP_SIZE).for_each(|i| {
+            let q = (x[group * Q_GROUP_SIZE + i] / scale).round() as i8;
+            self.data[group * Q_GROUP_SIZE + i] = q;
+        });
+        }
+    }
+
+    pub fn de_quantize(&self, n: usize) -> Vec<f32> {
+        let mut x: Vec<f32> = vec![0.0; n];
+        (0..n).for_each(|i| {
+            x[i] = self.data[i] as f32 * self.scale[i / Q_GROUP_SIZE];
+        });
+        return x;
+    }
 }
 
 #[derive(Default)]
